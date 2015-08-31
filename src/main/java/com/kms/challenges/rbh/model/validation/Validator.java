@@ -6,7 +6,6 @@ package com.kms.challenges.rbh.model.validation;
 
 import com.kms.challenges.rbh.model.validation.annotation.FormField;
 import com.kms.challenges.rbh.model.validation.annotation.MatchWith;
-import com.kms.challenges.rbh.model.validation.annotation.PasswordLength;
 import com.kms.challenges.rbh.model.validation.annotation.Require;
 import org.apache.commons.lang3.StringUtils;
 
@@ -67,31 +66,7 @@ public class Validator {
                                 }
                             }
                         }
-                        if (ano1 instanceof PasswordLength) {
-                            if (fieldValue != null) {
-                                //get the other field value
-                                String matchFieldName = ((PasswordLength) ano1).value();
-                                Object matchFieldValue = null;
-                                for (Field field1 : clazz.getDeclaredFields()) {
-                                    field1.setAccessible(true);
-                                    for (Annotation annotation : field1.getAnnotations()) {
-                                        if (annotation instanceof FormField) {
-                                            FormField fieldAnnotation = (FormField) annotation;
-                                            if (fieldAnnotation.value().equals(matchFieldName)) {
-                                                matchFieldValue = getFieldValue(parameterMap.get(matchFieldName),
-                                                                                field1.getType());
-                                            }
-                                        }
-                                    }
-                                }
-                                if (!fieldValue
-                                        .equals(matchFieldValue)) {
-                                    errorMap.put(formfieldAnnotation.value(),
-                                                 new ValidationError(formfieldAnnotation.value(),
-                                                                     ((MatchWith) ano1).errorMessage()));
-                                }
-                            }
-                        }
+
                     }
                     field.set(bean, fieldValue);
                 }

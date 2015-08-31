@@ -10,7 +10,6 @@ import com.kms.challenges.rbh.dao.impl.UserDaoImpl;
 import com.kms.challenges.rbh.model.UploadFile;
 import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.util.RabbitHolesUtil;
-import com.kms.challenges.rbh.web.filter.XsrfFilter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,8 +44,6 @@ public class SearchServlet extends HttpServlet {
         try {
             List<UploadFile> fileList = fileDao.searchByFileName(searchText);
             req.setAttribute("files", fileList);
-            req.setAttribute("tokenHeader", XsrfFilter.TOKEN_HEADER);
-            req.setAttribute("token", XsrfFilter.getToken(req.getSession()));
             req.getRequestDispatcher("/jsp/search.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException(e);

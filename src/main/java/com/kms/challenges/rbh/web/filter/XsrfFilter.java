@@ -36,6 +36,13 @@ public class XsrfFilter implements Filter {
         return "POST".equals(httpRequest.getMethod());
     }
 
+    private static boolean checkIllegal(String serverToken, String clientToken) {
+
+        if (clientToken == null || clientToken.isEmpty())
+            return false;
+        return serverToken.equals(clientToken);
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -46,17 +53,26 @@ public class XsrfFilter implements Filter {
                                                                                                      ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        String clientToken = req.getParameter(XsrfFilter.TOKEN_HEADER);
-        String serverToken = req.getSession().getAttribute(XsrfFilter.TOKEN_HEADER).toString();
-        LOGGER.debug(String.format("Request URL --> %s", req.getRequestURI()));
-        LOGGER.debug(String.format("--> Client Token : %s | Server Token : %s", clientToken, serverToken));
 
-        if ((isFormSubmission(req) && (clientToken == null || !clientToken.equals(serverToken)))) {
-            httpResponse.setStatus(403);
-            httpResponse.getOutputStream().println("Don't hack me!");
+        LOGGER.debug(String.format("Request URL --> %s", req.getRequestURI()));
+
+        if (req.getServletPath().startsWith("/login")) {
+            chain.doFilter(request, response);
             return;
         }
 
+        if (isFormSubmission(req)) {
+
+            String clientToken = req.getParameter(XsrfFilter.TOKEN_HEADER);
+            String serverToken = req.getSession().getAttribute(XsrfFilter.TOKEN_HEADER).toString();
+            LOGGER.debug(String.format("--> Client Token : %s | Server Token : %s", clientToken, serverToken));
+
+            if (!checkIllegal(serverToken, clientToken)) {
+                httpResponse.setStatus(403);
+                httpResponse.getOutputStream().println("Don't hack me!");
+                return;
+            }
+        }
 
         chain.doFilter(request, response);
     }

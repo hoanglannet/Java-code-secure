@@ -10,13 +10,11 @@ import com.kms.challenges.rbh.model.LoginForm;
 import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.model.validation.ValidationError;
 import com.kms.challenges.rbh.model.validation.Validator;
-import com.kms.challenges.rbh.web.filter.XsrfFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,8 +36,6 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LOGGER.debug("Login page initialize");
-        req.setAttribute("tokenHeader", XsrfFilter.TOKEN_HEADER);
-        req.setAttribute("token", XsrfFilter.getToken(req.getSession()));
         getServletContext().getRequestDispatcher("/jsp/user/login.jsp").forward(req, resp);
     }
 
@@ -56,13 +52,14 @@ public class LoginServlet extends HttpServlet {
         try {
             User user = dao.getUserByEmailAndPassword(form.getEmail(), form.getPassword());
             if (user != null) {
+                // Renew session when login for prevent session hijacking
+                LOGGER.debug("Old Session --> " + req.getSession().getId());
+                req.getSession().invalidate();
+                LOGGER.debug("New Session --> " + req.getSession().getId());
+
                 req.getSession().setAttribute("user", user);
-                //if the login user is our dear admin, set a cookie flag for him, more convenient for him when he
-                // come back
-                if (User.ROLE.ADMIN == user.getRole()) {
-                    resp.addCookie(new Cookie("admin", "true"));
-                }
-                resp.sendRedirect("/index");
+
+                resp.sendRedirect("/");
             } else {
                 req.setAttribute("loginSuccess", false);
                 getServletContext().getRequestDispatcher("/jsp/user/login.jsp").forward(req, resp);

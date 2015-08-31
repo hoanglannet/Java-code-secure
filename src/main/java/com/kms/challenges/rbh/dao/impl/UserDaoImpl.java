@@ -9,10 +9,10 @@ import com.kms.challenges.rbh.dao.UserDao;
 import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.util.SecureUtils;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * @author tkhuu.
@@ -20,40 +20,49 @@ import java.sql.Statement;
 public class UserDaoImpl extends AbstractMethodError implements UserDao {
     @Override
     public User getUser(long userId) throws SQLException {
-        try (Statement select = ConnectionManager.getConnection()
-                                                 .createStatement()) {
-            try (ResultSet resultSet = select
-                    .executeQuery(String.format("select * from user_accounts "
-                                                + "where id=%s", userId))) {
-                if (resultSet.next()) {
-                    return convertResultSetToUser(resultSet);
+        try (Connection con = ConnectionManager.getConnection()) {
+            try (PreparedStatement selectUser = con.prepareStatement(UserQuery.SELECT_USER)) {
+                selectUser.setLong(1, userId);
+                try (ResultSet resultSet = selectUser.executeQuery()) {
+                    if (resultSet.next()) {
+                        return convertResultSetToUser(resultSet);
+                    }
+                    return null;
                 }
-                return null;
             }
         }
+
     }
 
     @Override
     public User getUserByEmailAndPassword(String email, String password) throws SQLException {
-        try (PreparedStatement getUser = ConnectionManager
-                .getConnection().prepareStatement(Query.GET_USER)) {
+        try (Connection con = ConnectionManager.getConnection()) {
+            try (PreparedStatement getUser = con.prepareStatement(UserQuery.GET_USER)) {
 
-            getUser.setString(1, SecureUtils.escape(email));
-            getUser.setString(2, password);
+                getUser.setString(1, SecureUtils.escape(email));
+                getUser.setString(2, password);
 
-            try (ResultSet resultSet = getUser.executeQuery()) {
-                User user = null;
-
-                if (resultSet.next()) {
-                    user = convertResultSetToUser(resultSet);
+                try (ResultSet resultSet = getUser.executeQuery()) {
+                    User user = null;
+                    if (resultSet.next()) {
+                        user = convertResultSetToUser(resultSet);
+                    }
+                    return user;
                 }
-                return user;
             }
         }
+
+
     }
 
     @Override
     public User getAdminUser() throws SQLException {
+
+       /* try(Connection con = ConnectionManager.getConnection()){
+            try(PreparedStatement getAdmin = con.prepareStatement(UserQuery.GET_ADMIN)){
+
+            }
+        }
         try (Statement select = ConnectionManager.getConnection()
                                                  .createStatement()) {
             try (ResultSet resultSet = select
@@ -67,7 +76,8 @@ public class UserDaoImpl extends AbstractMethodError implements UserDao {
                 }
                 return user;
             }
-        }
+        }*/
+        return null;
     }
 
     private User convertResultSetToUser(ResultSet resultSet) throws SQLException {
@@ -81,27 +91,17 @@ public class UserDaoImpl extends AbstractMethodError implements UserDao {
 
     @Override
     public void addUser(User user) throws SQLException {
-        try (PreparedStatement insert = ConnectionManager.getConnection()
-                                                         .prepareStatement
-                                                                 (Query.INSERT_USER)) {
-            insert.setString(1, SecureUtils.escape(user.getEmail()));
-            insert.setString(2, SecureUtils.escape(user.getFirstName()));
-            insert.setString(3, SecureUtils.escape(user.getLastName()));
-            insert.setString(4, user.getPassword());
-            insert.setString(5, user.getRole().name());
-
-            insert.execute();
+        try (Connection con = ConnectionManager.getConnection()) {
+            try (PreparedStatement insert = con.prepareStatement(UserQuery.INSERT_USER)) {
+                insert.setString(1, SecureUtils.escape(user.getEmail()));
+                insert.setString(2, SecureUtils.escape(user.getFirstName()));
+                insert.setString(3, SecureUtils.escape(user.getLastName()));
+                insert.setString(4, user.getPassword());
+                insert.setString(5, user.getRole().name());
+                insert.execute();
+            }
         }
+
     }
 
-    class Query {
-        public static final String INSERT_USER = "insert into user_accounts"
-                                                 + "(email,first_name,"
-                                                 + "last_name,password,role) "
-                                                 + "values(?,?,?,?,?)";
-
-        public static final String GET_USER = "select * from user_accounts "
-                                              + "where email=? and "
-                                              + "password=?";
-    }
 }

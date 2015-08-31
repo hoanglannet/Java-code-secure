@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @author tkhuu.
  */
-@WebServlet(name = "index-servlet",urlPatterns = "/index")
+@WebServlet(name = "index-servlet", urlPatterns = "/")
 public class IndexServlet extends HttpServlet {
     private FileDao dao;
     public IndexServlet() {

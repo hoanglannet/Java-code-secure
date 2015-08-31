@@ -27,20 +27,6 @@ public class SecurityFilter implements Filter{
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         User user = (User) httpServletRequest.getSession().getAttribute("user");
-        //we only have 1 admin, great great admin
-        //check if request have admin flag in cookie
-        /*
-        for (Cookie cookie : httpServletRequest.getCookies()) {
-            if ("admin".equals(cookie.getName())) {
-                // our great admin have come back welcomback, prepare the admin user for him
-                try {
-                    httpServletRequest.getSession().setAttribute("user", dao.getAdminUser());
-                } catch (SQLException e) {
-                    throw new ServletException(e);
-                }
-            }
-        }
-        */
         if (user == null) {
             httpServletRequest.getSession().setAttribute("user",User.getNewAnonymousUser());
 

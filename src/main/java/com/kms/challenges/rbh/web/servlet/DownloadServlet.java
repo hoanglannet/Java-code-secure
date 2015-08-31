@@ -4,7 +4,6 @@
 
 package com.kms.challenges.rbh.web.servlet;
 
-import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.util.RabbitHolesUtil;
 import com.kms.challenges.rbh.util.SecureUtils;
 import org.apache.commons.io.IOUtils;
@@ -28,12 +27,6 @@ public class DownloadServlet extends HttpServlet {
         //Download allow all user to download so let save sql select here
         String fileName = SecureUtils.filterFileName(req.getParameter("fileName"));
         Long userId = Long.parseLong(req.getParameter("userId"));
-        User user = (User) req.getSession().getAttribute("user");
-        if (!user.getId().equals(userId)) {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            resp.getOutputStream().println("You don't have permission to download this file!");
-            return;
-        }
 
         File file = new File(RabbitHolesUtil.properties.get("upload.location") + userId.toString() + "/" + fileName);
         try (FileInputStream inputStream = new FileInputStream(file)) {

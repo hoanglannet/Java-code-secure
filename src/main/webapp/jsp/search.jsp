@@ -1,3 +1,7 @@
+<%--
+  ~ Copyright (c) 2015 Kms-technology.com
+  --%>
+
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
@@ -17,7 +21,8 @@
                             <div class="row">
                                 <div id="form-group-file" class="form-group col-lg-4">
                                     <label>Search: </label>
-                                    <input type="text" name="searchText" class="form-inline">
+                                    <input type="text" name="searchText" class="form-control form-inline"
+                                           placeholder="Enter your keywords">
                                     <input type="submit" value="Search" class="btn btn-default">
                                 </div>
                             </div>

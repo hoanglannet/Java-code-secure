@@ -22,8 +22,6 @@
                         </div>
                     </c:if>
                     <form action="${pageContext.request.contextPath}/login" method="POST" role="form">
-                        <input type="hidden" name="${tokenHeader}"
-                               value="${token}">
 
                         <div class="row">
                             <div id="form-group-email" class="form-group col-lg-4">
