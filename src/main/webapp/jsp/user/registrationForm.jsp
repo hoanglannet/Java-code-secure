@@ -1,3 +1,7 @@
+<%--
+  ~ Copyright (c) 2015 Kms-technology.com
+  --%>
+
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
@@ -12,7 +16,8 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <form action="${pageContext.request.contextPath}/register" commandName="user" method="POST" enctype="utf8" role="form">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <input type="hidden" name="${tokenHeader}"
+                               value="${token}">
                         <div class="row">
                             <div id="form-group-firstName" class="form-group col-lg-4">
                                 <label class="control-label" for="user-firstName"><fmt:message key="label.user.firstName"/>:</label>

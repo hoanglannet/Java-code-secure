@@ -1,0 +1,70 @@
+<!--
+  ~ Copyright (c) 2015 Kms-technology.com
+  -->
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
+
+
+    <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+        <init-param>
+            <param-name>acceptRanges</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dirAllowed</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>putAllowed</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>delAllowed</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectWelcome</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>minGzipLength</param-name>
+            <param-value>8192</param-value>
+        </init-param>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.css</url-pattern>
+        <url-pattern>*.ico</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.gif</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>jsp/index.jsp</welcome-file>
+    </welcome-file-list>
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+
+    </session-config>
+
+    <session-config>
+        <session-timeout>15</session-timeout>
+    </session-config>
+
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/jsp/error.jsp</location>
+    </error-page>
+
+</web-app>

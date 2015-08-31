@@ -15,7 +15,7 @@ file_size BIGINT
 
 CREATE table if not exists files(id identity,
 file_name VARCHAR(100),
-upload_note VARCHAR(100),
+  upload_note VARCHAR(255),
 file_metadata_id BIGINT,
 FOREIGN KEY(file_metadata_id) REFERENCES file_metadatas(id));
 

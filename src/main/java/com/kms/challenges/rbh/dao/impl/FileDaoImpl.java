@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.dao.impl;
 
 import com.kms.challenges.rbh.dao.AbstractRabbitHoleDao;
@@ -7,7 +11,11 @@ import com.kms.challenges.rbh.dao.UserDao;
 import com.kms.challenges.rbh.model.FileMetadata;
 import com.kms.challenges.rbh.model.UploadFile;
 import com.kms.challenges.rbh.model.User;
+import com.kms.challenges.rbh.util.SecureUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,6 +26,7 @@ import java.util.List;
  * @author tkhuu.
  */
 public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileDaoImpl.class);
     private UserDao userDao;
 
     public FileDaoImpl(UserDao userDao) {
@@ -36,15 +45,16 @@ public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
                     //try to get the user
                     User user = null;
                     try (Statement selectUserFiles = ConnectionManager.getConnection()
-                            .createStatement(); ResultSet userFileResultSet = selectUserFiles.executeQuery(
-                            String.format("select * from user_files where file_id=%s", resultSet.getLong("id")))) {
+                                                                      .createStatement();
+                         ResultSet userFileResultSet = selectUserFiles.executeQuery(
+                                 String.format("select * from user_files where file_id=%s", resultSet.getLong("id")))) {
                         if (userFileResultSet.next()) {
                             user = userDao.getUser(userFileResultSet.getLong("user_id"));
                         }
                     }
                     UploadFile uploadFile = new UploadFile(resultSet.getLong("id"),
-                            resultSet.getString("file_name"),
-                            resultSet.getString("upload_note"), metadata, user);
+                                                           resultSet.getString("file_name"),
+                                                           resultSet.getString("upload_note"), metadata, user);
                     files.add(uploadFile);
                 }
             }
@@ -60,8 +70,12 @@ public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
                     .executeQuery(String.format("select * from files where id=%s", fileId))) {
                 if (resultSet.next()) {
                     UploadFile uploadFile = new UploadFile(fileId, resultSet.getString("file_name"),
-                            resultSet.getString("upload_note"),
-                            getFileMetadata(resultSet.getLong("file_metadata_id")), getUploader(fileId));
+                                                           resultSet.getString("upload_note"),
+                                                           getFileMetadata(resultSet.getLong("file_metadata_id")),
+                                                           getUploader(fileId));
+                    LOGGER.debug(String.format("Get file by id : ID = %s | Filename = %s | Uploader = %s",
+                                               uploadFile.getId(),
+                                               uploadFile.getFileName(), uploadFile.getUploader().getEmail()));
                     return uploadFile;
                 } else {
                     throw new RuntimeException("File not found");
@@ -100,12 +114,13 @@ public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
     public FileMetadata getFileMetadata(long file_metadata_id) throws SQLException {
         FileMetadata metadata = null;
         try (Statement selectMetadata = ConnectionManager.getConnection()
-                .createStatement(); ResultSet metadataResultSet = selectMetadata
-                .executeQuery(String.format("select * from file_metadatas where id=%s",
-                        file_metadata_id))) {
+                                                         .createStatement();
+             ResultSet metadataResultSet = selectMetadata
+                     .executeQuery(String.format("select * from file_metadatas where id=%s",
+                                                 file_metadata_id))) {
             if (metadataResultSet.next()) {
                 metadata = new FileMetadata(metadataResultSet.getLong("id"), metadataResultSet.getString("file_type"),
-                        metadataResultSet.getLong("file_size"));
+                                            metadataResultSet.getLong("file_size"));
             }
         }
         return metadata;
@@ -113,29 +128,39 @@ public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
 
     @Override
     public Long addFile(UploadFile uploadFile) throws SQLException {
+
         Long metadataId = insertMetadata(uploadFile.getFileMetadata());
         Long fileId = null;
-        try (Statement insertFile = ConnectionManager.getConnection().createStatement()) {
-            insertFile.execute(
-                    String.format("insert into files(file_name,upload_note,file_metadata_id) values('%s','%s',%s)",
-                            uploadFile.getFileName(), uploadFile.getUploadNote(), metadataId));
+        try (PreparedStatement insertFile = ConnectionManager.getConnection()
+                                                             .prepareStatement(
+                                                                     FileQuery.INSERT_FILE)) {
+            insertFile.setString(1, SecureUtils.escape(uploadFile.getFileName()));
+            insertFile.setString(2, SecureUtils.escape(uploadFile.getUploadNote()));
+            insertFile.setLong(3, metadataId);
+            LOGGER.debug(String.format("Input upload file : FileName = %s - Node = %s - MetaId = %s ",
+                                       uploadFile.getFileName(), uploadFile.getUploadNote(), metadataId));
+            insertFile.execute();
             ResultSet resultSet = insertFile.getGeneratedKeys();
             if (resultSet.next()) {
+
                 fileId = resultSet.getLong(1);
+                LOGGER.debug(fileId.toString());
             }
         }
         try (Statement insertFileUser = ConnectionManager.getConnection().createStatement()) {
             insertFileUser.execute(String.format("insert into user_files(user_id,file_id) values(%s,%s)",
-                    uploadFile.getUploader().getId(), fileId));
+                                                 uploadFile.getUploader().getId(), fileId));
         }
         return fileId;
     }
 
     @Override
     public Long insertMetadata(FileMetadata metadata) throws SQLException {
-        try (Statement insertMetadata = ConnectionManager.getConnection().createStatement()) {
-            insertMetadata.execute(String.format("insert into file_metadatas(file_type,file_size) values('%s',%s)",
-                    metadata.getFileType(), metadata.getFileSize()));
+        try (PreparedStatement insertMetadata = ConnectionManager
+                .getConnection().prepareStatement(FileQuery.INSERT_META_FILE)) {
+            insertMetadata.setString(1, metadata.getFileType());
+            insertMetadata.setLong(2, metadata.getFileSize());
+            insertMetadata.execute();
             ResultSet resultSet = insertMetadata.getGeneratedKeys();
             if (resultSet.next()) {
                 return resultSet.getLong(1);
@@ -161,9 +186,10 @@ public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
     @Override
     public List<UploadFile> searchByFileName(String fileName) throws SQLException {
         List<UploadFile> uploadFiles = new ArrayList<>();
-        try (Statement select = ConnectionManager.getConnection().createStatement()) {
-            ResultSet resultSet = select
-                    .executeQuery(String.format("select * from files where file_name like '%%%s%%'", fileName));
+        try (PreparedStatement select = ConnectionManager.getConnection()
+                                                         .prepareStatement(FileQuery.SEARCH_FILE)) {
+            select.setString(1, "%%" + SecureUtils.escape(fileName) + "%%");
+            ResultSet resultSet = select.executeQuery();
             while (resultSet.next()) {
                 Long fileId = resultSet.getLong("id");
                 uploadFiles.add(getFile(fileId));

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.web.servlet;
 
 import com.kms.challenges.rbh.dao.UserDao;
@@ -6,6 +10,8 @@ import com.kms.challenges.rbh.model.RegistrationForm;
 import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.model.validation.ValidationError;
 import com.kms.challenges.rbh.model.validation.Validator;
+import com.kms.challenges.rbh.util.SecureUtils;
+import com.kms.challenges.rbh.web.filter.XsrfFilter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +35,10 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("tokenHeader", XsrfFilter.TOKEN_HEADER);
+        req.setAttribute("token", XsrfFilter.getToken(req.getSession()));
         getServletContext().getRequestDispatcher("/jsp/user/registrationForm.jsp").forward(req, resp);
+
     }
 
     @Override
@@ -46,8 +55,8 @@ public class RegistrationServlet extends HttpServlet {
             }
             try {
                 dao.addUser(
-                        new User(null, form.getEmail(), form.getFirstName(), form.getLastName(), form.getPassword(),
-                                User.ROLE.USER));
+                        new User(null, SecureUtils.escape(form.getEmail()), SecureUtils.escape(form.getFirstName()),
+                                 SecureUtils.escape(form.getLastName()), form.getPassword(), User.ROLE.USER));
             } catch (SQLException e) {
                 throw new ServletException(e);
             }

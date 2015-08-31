@@ -1,3 +1,7 @@
+<%--
+  ~ Copyright (c) 2015 Kms-technology.com
+  --%>
+
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
@@ -11,16 +15,24 @@
                 <h3>Share your file to the world!!!</h3>
                 <div>
                     <c:forEach var="file" items="${files}">
-                        <p>
-                            <span>${file.uploader.firstName}</span> <span>: </span>
-                            <span><a href="/download?fileName=${file.fileName}&userId=${file.uploader.id}">${file.fileName}</a></span>
-                            <span>${file.uploadNote}</span>
-                            <a href="${pageContext.request.contextPath}/delete?fileId=${file.id}&r=upload">Delete</a>
-                        </p>
+                        <form action="/delete" method="POST">
+                            <p>
+                                <span>${file.uploader.firstName}</span> <span>: </span>
+                                <span><a
+                                        href="/download?fileName=${file.fileName}&userId=${file.uploader.id}">${file.fileName}</a></span>
+                                <span>${file.uploadNote}</span>
+                                <input type="hidden" name="${tokenHeader}"
+                                       value="${token}">
+                                <input type="hidden" name="fileId" value="${file.id}"/>
+                                <button type="submit">Delete</button>
+                            </p>
+                        </form>
                     </c:forEach>
                 </div>
                 <form action="/upload" method="POST" enctype="multipart/form-data">
                     <div class="row">
+                        <input type="hidden" name="${tokenHeader}"
+                               value="${token}">
                         <div id="form-group-file" class="form-group col-lg-4">
                             <label class="control-label" for="file"><fmt:message key="label.vault.file"/>:</label>
                             <input id="file" name="file" type="file" class="form-inline"/>

@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.web.servlet;
 
+import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.util.RabbitHolesUtil;
+import com.kms.challenges.rbh.util.SecureUtils;
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
@@ -20,9 +26,16 @@ public class DownloadServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //Download allow all user to download so let save sql select here
-        String fileName = req.getParameter("fileName");
-        String userId = req.getParameter("userId");
-        File file = new File(RabbitHolesUtil.properties.get("upload.location") + userId + "/" + fileName);
+        String fileName = SecureUtils.filterFileName(req.getParameter("fileName"));
+        Long userId = Long.parseLong(req.getParameter("userId"));
+        User user = (User) req.getSession().getAttribute("user");
+        if (!user.getId().equals(userId)) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            resp.getOutputStream().println("You don't have permission to download this file!");
+            return;
+        }
+
+        File file = new File(RabbitHolesUtil.properties.get("upload.location") + userId.toString() + "/" + fileName);
         try (FileInputStream inputStream = new FileInputStream(file)) {
             resp.setHeader("Content-disposition", "attachment; filename=" + fileName);
             IOUtils.copy(inputStream, resp.getOutputStream());

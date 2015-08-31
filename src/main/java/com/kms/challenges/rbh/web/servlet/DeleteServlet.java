@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.web.servlet;
 
 import com.kms.challenges.rbh.dao.FileDao;
@@ -26,7 +30,7 @@ public class DeleteServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String fileIdString = req.getParameter("fileId");
         if (fileIdString != null) {
             Long fileId = Long.parseLong(fileIdString);

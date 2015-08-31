@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.web.servlet;
 
 import com.kms.challenges.rbh.dao.FileDao;
@@ -5,6 +9,7 @@ import com.kms.challenges.rbh.dao.impl.FileDaoImpl;
 import com.kms.challenges.rbh.dao.impl.UserDaoImpl;
 import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.util.RabbitHolesUtil;
+import com.kms.challenges.rbh.web.filter.XsrfFilter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,6 +40,8 @@ public class IndexServlet extends HttpServlet {
         }
         try {
             req.setAttribute("files", dao.getAllFiles());
+            req.setAttribute("tokenHeader", XsrfFilter.TOKEN_HEADER);
+            req.setAttribute("token", XsrfFilter.getToken(req.getSession()));
         } catch (SQLException e) {
             throw new ServletException(e);
         }

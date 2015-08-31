@@ -1,3 +1,7 @@
+<%--
+  ~ Copyright (c) 2015 Kms-technology.com
+  --%>
+
 <!DOCTYPE html>
 <%@ tag pageEncoding="UTF-8" %>
 <%@ attribute name="header" fragment="true"  %>
@@ -46,7 +50,10 @@
                 <rbt:authorize accessMode="AUTHORIZED">
                     <li>
                         <form action="${pageContext.request.contextPath}/logout" method="POST">
+                            <input type="hidden" name="${tokenHeader}"
+                                   value="${token}">
                             <fmt:message key="label.homepage.title"/> ${user.firstName} ${user.lastName}
+
                             <a href="/upload">Upload</a>
                             <button type="submit" class="btn btn-default navbar-btn">
                                 <fmt:message key="label.navigation.logout.link"/>

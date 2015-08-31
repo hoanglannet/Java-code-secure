@@ -1,4 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!--
+  ~ Copyright (c) 2015 Kms-technology.com
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kms.challenges</groupId>
@@ -52,13 +57,6 @@
         </dependency>
 
 
-        <!-- MySQL -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.connector.version}</version>
-        </dependency>
-
         <!-- H2 Database -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -77,17 +75,26 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
         <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.2</version>
+            <version>1.1.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+
         <!-- Joda -->
         <dependency>
             <groupId>joda-time</groupId>
@@ -108,6 +115,21 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.3.2.v20150730</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>9.3.2.v20150730</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-annotations</artifactId>
+            <version>9.3.2.v20150730</version>
         </dependency>
     </dependencies>
     <build>
@@ -153,21 +175,20 @@
                 <version>2.4</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.1.5.v20140505</version>
+                <version>9.3.2.v20150730</version>
                 <configuration>
-                    <stopKey></stopKey>
-                    <stopPort></stopPort>
-                    <connectors>
-                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>8181</port>
-                            <maxIdleTime>50000</maxIdleTime>
-                        </connector>
-                    </connectors>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
+                    <httpConnector>
+                        <port>8888</port>
+                    </httpConnector>
+
                 </configuration>
             </plugin>
         </plugins>

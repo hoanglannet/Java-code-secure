@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.web.servlet;
 
 import com.kms.challenges.rbh.dao.UserDao;
@@ -6,6 +10,7 @@ import com.kms.challenges.rbh.model.LoginForm;
 import com.kms.challenges.rbh.model.User;
 import com.kms.challenges.rbh.model.validation.ValidationError;
 import com.kms.challenges.rbh.model.validation.Validator;
+import com.kms.challenges.rbh.web.filter.XsrfFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +38,8 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LOGGER.debug("Login page initialize");
+        req.setAttribute("tokenHeader", XsrfFilter.TOKEN_HEADER);
+        req.setAttribute("token", XsrfFilter.getToken(req.getSession()));
         getServletContext().getRequestDispatcher("/jsp/user/login.jsp").forward(req, resp);
     }
 

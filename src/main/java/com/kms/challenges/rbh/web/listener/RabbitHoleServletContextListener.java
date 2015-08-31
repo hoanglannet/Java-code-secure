@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.web.listener;
 
 import com.kms.challenges.rbh.dao.ConnectionManager;
@@ -17,7 +21,7 @@ public class RabbitHoleServletContextListener implements ServletContextListener 
             .getLogger(RabbitHoleServletContextListener.class.getCanonicalName());
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        LOGGER.info("Servlet Context initalized");
+        LOGGER.info("Servlet Context initalized, ");
     }
 
     @Override
