@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 @WebFilter(filterName = "security-filter",urlPatterns = "*")
 public class SecurityFilter implements Filter{
+    public static final String HEADER = "REMEMBER";
     private UserDao dao;
     public SecurityFilter() {
         dao = new UserDaoImpl();
@@ -27,10 +28,13 @@ public class SecurityFilter implements Filter{
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         User user = (User) httpServletRequest.getSession().getAttribute("user");
+
+
         if (user == null) {
             httpServletRequest.getSession().setAttribute("user",User.getNewAnonymousUser());
 
         }
+
 
         chain.doFilter(request, response);
     }

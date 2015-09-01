@@ -55,31 +55,6 @@ public class UserDaoImpl extends AbstractMethodError implements UserDao {
 
     }
 
-    @Override
-    public User getAdminUser() throws SQLException {
-
-       /* try(Connection con = ConnectionManager.getConnection()){
-            try(PreparedStatement getAdmin = con.prepareStatement(UserQuery.GET_ADMIN)){
-
-            }
-        }
-        try (Statement select = ConnectionManager.getConnection()
-                                                 .createStatement()) {
-            try (ResultSet resultSet = select
-                    .executeQuery(
-                            String.format("select * from user_accounts where "
-                                          + "role='%s'", User.ROLE.ADMIN))) {
-                User user = null;
-
-                if (resultSet.next()) {
-                    user = convertResultSetToUser(resultSet);
-                }
-                return user;
-            }
-        }*/
-        return null;
-    }
-
     private User convertResultSetToUser(ResultSet resultSet) throws SQLException {
         return new User(resultSet.getLong("id"),
                 resultSet.getString("email"),
@@ -103,5 +78,6 @@ public class UserDaoImpl extends AbstractMethodError implements UserDao {
         }
 
     }
+
 
 }

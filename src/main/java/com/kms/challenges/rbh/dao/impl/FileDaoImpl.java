@@ -33,6 +33,7 @@ public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
         this.userDao = userDao;
     }
 
+    // HACK : I tried to take connection out try block (connection poor) --> Slowly and no response
     @Override
     public List<UploadFile> getAllFiles() throws SQLException {
         List<UploadFile> files = new ArrayList<>();
@@ -56,7 +57,6 @@ public class FileDaoImpl extends AbstractRabbitHoleDao implements FileDao {
         LOGGER.debug(String.format("Get all files  --> There are %s files.", files.size()));
         return files;
     }
-
 
     @Override
     public UploadFile getFile(Long fileId) throws SQLException {

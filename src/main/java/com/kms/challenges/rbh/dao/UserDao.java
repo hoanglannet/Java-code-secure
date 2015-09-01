@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.dao;
 
 import com.kms.challenges.rbh.model.User;
@@ -12,7 +16,6 @@ public interface UserDao {
 
     User getUserByEmailAndPassword(String email, String password) throws SQLException;
 
-    User getAdminUser() throws SQLException;
-
     void addUser(User user) throws SQLException;
+
 }
