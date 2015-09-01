@@ -6,8 +6,11 @@ package com.kms.challenges.rbh.model.validation;
 
 import com.kms.challenges.rbh.model.validation.annotation.FormField;
 import com.kms.challenges.rbh.model.validation.annotation.MatchWith;
+import com.kms.challenges.rbh.model.validation.annotation.MinLength;
 import com.kms.challenges.rbh.model.validation.annotation.Require;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -16,10 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Validator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Validator.class);
+
     public static <T> T parseToBeanAndValidate(
             Class<T> clazz, Map<String, String[]> parameterMap,
             Map<String, ValidationError> errorMap) throws
-            IllegalAccessException, InstantiationException {
+                                                   IllegalAccessException, InstantiationException {
         T bean = clazz.newInstance();
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
@@ -33,14 +38,34 @@ public class Validator {
                         if (ano1 instanceof Require) {
                             if (((Require) ano1).require()) {
                                 if (parameterValue == null || parameterValue.length == 0 || (parameterValue.length ==
-                                        1 && StringUtils
-                                        .isEmpty(parameterValue[0]))) {
+                                                                                             1 && StringUtils
+                                                                                                     .isEmpty(
+                                                                                                             parameterValue[0]))) {
                                     errorMap.put(formfieldAnnotation.value(),
-                                            new ValidationError(formfieldAnnotation.value(),
-                                                    ((Require) ano1).errorMessage()));
+                                                 new ValidationError(formfieldAnnotation.value(),
+                                                                     ((Require) ano1).errorMessage()));
                                 }
                             }
                         }
+                        LOGGER.debug(String.format("Validate ano: %s | field %s --> value: %s",
+                                                   ano1.annotationType().getSimpleName(), formfieldAnnotation.value(),
+                                                   parameterValue[0]));
+                        // validate min length
+                        if (ano1 instanceof MinLength) {
+                            LOGGER.debug(String.format("Validate minlength value: %s; length: %s",
+                                                       parameterValue[0], parameterValue[0].length()));
+
+                            int min = ((MinLength) ano1).min();
+                            String message = ((MinLength) ano1).errorMessage();
+                            if (min > 0) {
+                                if (parameterValue != null && parameterValue.length > 0 &&
+                                    (parameterValue[0].length() <= min)) {
+                                    errorMap.put(formfieldAnnotation.value(),
+                                                 new ValidationError(formfieldAnnotation.value(), message));
+                                }
+                            }
+                        }
+
                         if (ano1 instanceof MatchWith) {
                             if (fieldValue != null) {
                                 //get the other field value
@@ -53,7 +78,7 @@ public class Validator {
                                             FormField fieldAnnotation = (FormField) annotation;
                                             if (fieldAnnotation.value().equals(matchFieldName)) {
                                                 matchFieldValue = getFieldValue(parameterMap.get(matchFieldName),
-                                                        field1.getType());
+                                                                                field1.getType());
                                             }
                                         }
                                     }
@@ -61,8 +86,8 @@ public class Validator {
                                 if (!fieldValue
                                         .equals(matchFieldValue)) {
                                     errorMap.put(formfieldAnnotation.value(),
-                                            new ValidationError(formfieldAnnotation.value(),
-                                                    ((MatchWith) ano1).errorMessage()));
+                                                 new ValidationError(formfieldAnnotation.value(),
+                                                                     ((MatchWith) ano1).errorMessage()));
                                 }
                             }
                         }

@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2015 Kms-technology.com
+ */
+
 package com.kms.challenges.rbh.model;
 
 import com.kms.challenges.rbh.model.validation.annotation.FormField;
 import com.kms.challenges.rbh.model.validation.annotation.MatchWith;
+import com.kms.challenges.rbh.model.validation.annotation.MinLength;
 import com.kms.challenges.rbh.model.validation.annotation.Require;
 
 /**
@@ -19,6 +24,7 @@ public class RegistrationForm {
     private String lastName;
     @FormField("password")
     @Require(errorMessage = "Password is required")
+    @MinLength(min = 8, errorMessage = "Password must be greater than 8 character.")
     @MatchWith(fieldName = "password_confirm", errorMessage = "Password not match")
     private String password;
     @FormField("password_confirm")
