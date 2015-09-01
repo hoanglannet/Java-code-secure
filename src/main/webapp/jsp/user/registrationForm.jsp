@@ -16,8 +16,6 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <form action="${pageContext.request.contextPath}/register" commandName="user" method="POST" enctype="utf8" role="form">
-                        <input type="hidden" name="${tokenHeader}"
-                               value="${token}">
                         <div class="row">
                             <div id="form-group-firstName" class="form-group col-lg-4">
                                 <label class="control-label" for="user-firstName"><fmt:message key="label.user.firstName"/>:</label>

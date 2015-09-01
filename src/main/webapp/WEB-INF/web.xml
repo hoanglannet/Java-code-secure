@@ -7,7 +7,6 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
 
-
     <servlet>
         <servlet-name>default</servlet-name>
         <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
@@ -51,13 +50,12 @@
     </servlet-mapping>
 
     <welcome-file-list>
-        <welcome-file>jsp/index.jsp</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     <session-config>
         <cookie-config>
             <http-only>true</http-only>
         </cookie-config>
-
     </session-config>
 
     <session-config>
@@ -66,7 +64,7 @@
 
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/jsp/error.jsp</location>
+        <location>/error</location>
     </error-page>
 
 </web-app>
