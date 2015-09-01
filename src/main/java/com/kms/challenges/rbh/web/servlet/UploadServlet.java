@@ -74,12 +74,14 @@ public class UploadServlet extends HttpServlet {
         String uploadNote = SecureUtils.escape(req.getParameter("upload_note"));
         Part uploadedFile = req.getPart("file");
         Map<String, ValidationError> errorMap = new HashMap<>();
+
         if (!SecureUtils.fileValidator(uploadedFile.getName())) {
             errorMap.put("file", new ValidationError("file", "File format is not accepted!"));
             req.setAttribute("validationErrors", errorMap);
             req.getRequestDispatcher("/jsp/upload.jsp").forward(req, resp);
             return;
         }
+
         if (uploadedFile.getSize() == 0) {
             errorMap.put("file", new ValidationError("file", "Upload file is required"));
             req.setAttribute("validationErrors", errorMap);

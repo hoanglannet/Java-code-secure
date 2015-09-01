@@ -7,6 +7,7 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="tag" uri="http://rbh.kms.challenges.com/customtags" %>
 <t:layout>
     <jsp:attribute name="header"><fmt:message key="rabbitholes.homepage.title"/></jsp:attribute>
     <jsp:body>
@@ -19,9 +20,7 @@
                 <div class="panel-body">
                     <form action="/upload" method="POST" enctype="multipart/form-data">
                         <div class="row">
-                            <input type="hidden" name="${tokenHeader}"
-                                   value="${token}">
-
+                            <tag:token/>
                             <div id="form-group-file" class="form-group col-lg-4">
                                 <label class="control-label" for="file"><fmt:message key="label.vault.file"/>:</label>
                                 <input class="form-control form-inline" id="file" name="file" type="file"/>
@@ -72,8 +71,7 @@
                                         <td>
                                             <span>${file.uploadNote}</span></td>
                                         <td>
-                                            <input type="hidden" name="${tokenHeader}"
-                                                   value="${token}">
+                                            <tag:token/>
                                             <input type="hidden" name="fileId" value="${file.id}"/>
                                             <button class="btn btn-danger" type="submit"><i
                                                     class="glyphicon glyphicon-remove"></i> Delete

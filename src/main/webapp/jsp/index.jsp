@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="rb" uri="http://rbh.kms.challenges.com/customtags" %>
+<%@ taglib prefix="tag" uri="http://rbh.kms.challenges.com/customtags" %>
 <%--
   ~ Copyright (c) 2015 Kms-technology.com
   --%>
@@ -67,8 +68,7 @@
 
                                                     <rb:authenticate access="${user.role}" principleName="ADMIN">
                                                         <form action="/delete" method="POST">
-                                                            <input type="hidden" name="${tokenHeader}"
-                                                                   value="${token}">
+                                                            <tag:token/>
                                                             <input type="hidden" name="fileId" value="${file.id}"/>
                                                             <button class="btn btn-danger" type="submit"><i
                                                                     class="glyphicon glyphicon-remove"></i> Delete

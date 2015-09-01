@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!--
+  ~ Copyright (c) 2015 Kms-technology.com
+  -->
+
+<taglib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/j2ee"
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
         version="2.0">
   <description>Rabbit holes app cutom tags</description>
     <tlib-version>2.0</tlib-version>
     <short-name>rbt</short-name>
     <uri>http://rbh.kms.challenges.com/customtags</uri>
+    <tag>
+        <name>token</name>
+        <tag-class>com.kms.challenges.rbh.web.tag.TokenTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
     <tag>
         <name>authorize</name>
         <tag-class>com.kms.challenges.rbh.web.tag.AuthorizeTag</tag-class>
