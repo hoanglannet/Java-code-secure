@@ -4,10 +4,8 @@
 
 package com.kms.challenges.rbh.model.validation;
 
-import com.kms.challenges.rbh.model.validation.annotation.FormField;
-import com.kms.challenges.rbh.model.validation.annotation.MatchWith;
-import com.kms.challenges.rbh.model.validation.annotation.MinLength;
-import com.kms.challenges.rbh.model.validation.annotation.Require;
+import com.kms.challenges.rbh.model.validation.annotation.*;
+import com.kms.challenges.rbh.util.SecureUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +45,17 @@ public class Validator {
                                 }
                             }
                         }
+
+                        if (ano1 instanceof Email) {
+                            LOGGER.debug(String.format("Validate Email value: %s ", parameterValue[0]));
+                            if (parameterValue != null && parameterValue.length != 0
+                                && !SecureUtils.emailValidator(parameterValue[0])) {
+                                errorMap.put(formfieldAnnotation.value(),
+                                             new ValidationError(formfieldAnnotation.value(),
+                                                                 ((Email) ano1).errorMessage()));
+                            }
+                        }
+
                         LOGGER.debug(String.format("Validate ano: %s | field %s --> value: %s",
                                                    ano1.annotationType().getSimpleName(), formfieldAnnotation.value(),
                                                    parameterValue[0]));

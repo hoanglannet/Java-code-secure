@@ -4,10 +4,7 @@
 
 package com.kms.challenges.rbh.model;
 
-import com.kms.challenges.rbh.model.validation.annotation.FormField;
-import com.kms.challenges.rbh.model.validation.annotation.MatchWith;
-import com.kms.challenges.rbh.model.validation.annotation.MinLength;
-import com.kms.challenges.rbh.model.validation.annotation.Require;
+import com.kms.challenges.rbh.model.validation.annotation.*;
 
 /**
  * @author tkhuu.
@@ -15,6 +12,7 @@ import com.kms.challenges.rbh.model.validation.annotation.Require;
 public class RegistrationForm {
     @FormField("email")
     @Require(errorMessage = "Email is required")
+    @Email(errorMessage = "Your email is not illegal")
     private String email;
     @FormField("first_name")
     @Require(errorMessage = "First name is required")

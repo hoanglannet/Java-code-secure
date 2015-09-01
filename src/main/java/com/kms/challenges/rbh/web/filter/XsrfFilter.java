@@ -56,7 +56,7 @@ public class XsrfFilter implements Filter {
 
         LOGGER.debug(String.format("Request URL --> %s", req.getRequestURI()));
 
-        if (req.getServletPath().startsWith("/login")) {
+        if (req.getServletPath().startsWith("/login") || req.getServletPath().startsWith("/register")) {
             chain.doFilter(request, response);
             return;
         }

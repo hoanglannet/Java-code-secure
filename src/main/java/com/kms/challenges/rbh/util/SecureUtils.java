@@ -37,5 +37,12 @@ public class SecureUtils {
         Matcher matcher = pattern.matcher(input);
         return matcher.matches();
     }
+
+    public static boolean emailValidator(String email) {
+        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                                          + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 }
 
